@@ -9,7 +9,6 @@ from torch.autograd import Variable
 import torchvision
 from PIL import Image
 import numpy as np
-from resnet import i3_res50
 
 def load_frame(frame_file):
 	data = Image.open(frame_file)
@@ -28,19 +27,14 @@ def load_rgb_batch(frames_dir, rgb_files, frame_indices):
 			batch_data[i,j,:,:,:] = load_frame(os.path.join(frames_dir, rgb_files[frame_indices[i][j]]))
 	return batch_data
 
-def run(frequency, frames_dir, batch_size=1):
+def run(i3d, frequency, frames_dir, batch_size=1):
 	chunk_size = 16
-	# setup the model
-	i3d = i3_res50(400)
-	i3d.cuda()
-	i3d.train(False)  # Set model to evaluate mode
-
 	def forward_batch(b_data):
 		b_data = b_data.transpose([0, 4, 1, 2, 3])
 		b_data = torch.from_numpy(b_data)   # b,c,t,h,w  # 40x3x16x224x224
-		b_data = Variable(b_data.cuda(), volatile=True).float()
-		inp = {'frames': b_data}
 		with torch.no_grad():
+			b_data = Variable(b_data.cuda()).float()
+			inp = {'frames': b_data}
 			features = i3d(inp)
 		return features.cpu().numpy()
 

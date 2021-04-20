@@ -191,17 +191,17 @@ class I3Res50(nn.Module):
 
 #-----------------------------------------------------------------------------------------------#
 
-def i3_res50(num_classes):
+def i3_res50(num_classes, pretrainedpath):
 	net = I3Res50(num_classes=num_classes, use_nl=False)
-	state_dict = torch.load('/home/gowtham/Documents/8sem/finalyearproject/resneti3d/pretrained/i3d_r50_kinetics.pth')
+	state_dict = torch.load(pretrainedpath)
 	net.load_state_dict(state_dict)
 	print("Received Pretrained model..")
 	# freeze_bn(net, "net") # Only needed for finetuning. For validation, .eval() works.
 	return net
 
-def i3_res50_nl(num_classes):
+def i3_res50_nl(num_classes, pretrainedpath):
 	net = I3Res50(num_classes=num_classes, use_nl=True)
-	state_dict = torch.load('pretrained/i3d_r50_nl_kinetics.pth')
+	state_dict = torch.load(pretrainedpath)
 	net.load_state_dict(state_dict)
 	# freeze_bn(net, "net") # Only needed for finetuning. For validation, .eval() works.
 	return net
