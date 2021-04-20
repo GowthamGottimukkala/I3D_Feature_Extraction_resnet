@@ -1,8 +1,9 @@
 # I3D_Feature_Extraction_resnet
 This repo contains code to extract I3D features with resnet50 backbone given a folder of videos
 
-This code can be used for the below paper
+This code can be used for the below paper. Use at your own risk since this is still untested.
 * [Weakly-supervised Video Anomaly Detection with Robust Temporal Feature Magnitude Learning](https://arxiv.org/pdf/2101.10030.pdf)
+
 ---
 
 ## Credits
