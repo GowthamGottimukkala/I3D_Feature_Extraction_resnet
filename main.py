@@ -14,6 +14,7 @@ import torchvision
 from extract_features import run
 from resnet import i3_res50
 import os
+import errno
 
 
 def generate(datasetpath, outputpath, pretrainedpath, frequency, batch_size, sample_mode):
@@ -33,12 +34,20 @@ def generate(datasetpath, outputpath, pretrainedpath, frequency, batch_size, sam
 		ffmpeg.input(video).output('{}%d.jpg'.format(temppath),start_number=0).global_args('-loglevel', 'quiet').run()
 		print("Preprocessing done..")
 		features = run(i3d, frequency, temppath, batch_size, sample_mode)
-		np.save(outputpath + "/" + videoname, features)
+		output_file = outputpath + "/" + videoname + '.npy'
+		if not os.path.exists(os.path.dirname(output_file)):
+			try:
+				os.makedirs(os.path.dirname(output_file))
+			except OSError as exc: # Guard against race condition
+				if exc.errno != errno.EEXIST:
+					raise
+		with open(output_file, 'wb') as f:
+			np.save(f, features)
 		print("Obtained features of size: ", features.shape)
 		shutil.rmtree(temppath)
 		print("done in {0}.".format(time.time() - startime))
 
-if __name__ == '__main__': 
+if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--datasetpath', type=str, default="samplevideos/")
 	parser.add_argument('--outputpath', type=str, default="output")
@@ -48,3 +57,4 @@ if __name__ == '__main__':
 	parser.add_argument('--sample_mode', type=str, default="oversample")
 	args = parser.parse_args()
 	generate(args.datasetpath, str(args.outputpath), args.pretrainedpath, args.frequency, args.batch_size, args.sample_mode)    
+	
