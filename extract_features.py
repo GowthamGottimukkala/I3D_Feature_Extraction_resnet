@@ -1,19 +1,12 @@
 import os
-os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   
-import sys
-import io
-import zipfile
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-from torch.optim import lr_scheduler
-from torch.autograd import Variable
-import argparse
-import torchvision
-from PIL import Image
+os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
+
 import numpy as np
-import pdb
+import torch
+from natsort import natsorted
+from PIL import Image
+from torch.autograd import Variable
+
 
 def load_frame(frame_file):
 	data = Image.open(frame_file)
@@ -66,8 +59,7 @@ def run(i3d, frequency, frames_dir, batch_size, sample_mode):
 			features = i3d(inp)
 		return features.cpu().numpy()
 
-	rgb_files = [i for i in os.listdir(frames_dir)]
-	rgb_files.sort()
+	rgb_files = natsorted([i for i in os.listdir(frames_dir)])
 	frame_cnt = len(rgb_files)
 	# Cut frames
 	assert(frame_cnt > chunk_size)
