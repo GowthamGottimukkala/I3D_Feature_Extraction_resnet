@@ -56,7 +56,7 @@ for key in c2:
 		new_key = 'layer%d.%d.%s.%s'%(layer-1, block, name, suffix)
 		key_map[new_key] = key
 
-from models import resnet
+import resnet
 pth = resnet.I3Res50(num_classes=400, use_nl=True)
 state_dict = pth.state_dict()
 
